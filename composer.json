@@ -1,0 +1,17 @@
+{
+    "name": "halwaytovegas/classified-listing-modifications",
+    "description": "Modification Of Classified Listing For Halway To Vegas.",
+    "autoload": {
+        "psr-4": {
+            "Halwaytovegas\\ClassifiedListingModifications\\": "includes/"
+        }
+    },
+    "authors": [
+        {
+            "name": "cupid chakma",
+            "email": "greendaycu20@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {}
+}

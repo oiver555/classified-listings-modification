@@ -1,0 +1,60 @@
+/** disable availability row css **/
+
+.pricing-table.disabled {
+    cursor: not-allowed;
+    color: #212529;
+    background-color: rgba(0, 0, 0, .075);
+}
+
+
+/** Available Ad Space **/
+.image-overlay-wrapper {
+    position: relative;
+    overflow: hidden;
+}
+
+.image-overlay-wrapper img {
+    display: block;
+    width: 100%;
+    height: auto;
+}
+
+.image-overlay-wrapper .overlay-text{
+    display: none;
+}
+
+.listing-item:hover .image-overlay-wrapper .overlay-text{
+    position: absolute;
+    top: 80px;
+    left: 140px;
+    display: block;
+}
+
+.image-overlay-wrapper .overlay-text{
+    font-size: 20px;
+    font-weight: 900;
+}
+
+@media (hover: hover) and (pointer: fine) {
+    .rtcl-widget-listing-item:hover .image-overlay-wrapper img {
+        filter: brightness(50%);
+        transition: none;
+    }
+
+    .rtcl-widget-listing-item:hover .overlay-text {
+        opacity: 1;
+        transition: none;
+    }
+}
+
+/* Mobile - always show overlay text */
+@media (hover: none) {
+    .overlay-text {
+        opacity: 1;
+        background: rgba(0, 0, 0, 0.5);
+    }
+
+    .image-overlay-wrapper img {
+        filter: brightness(50%);
+    }
+}
