@@ -53,7 +53,7 @@ class Metaboxes
         $selected_data = ! empty(get_post_meta($post_id, 'rtcl_pricing_packages', true))  ? get_post_meta($post_id, 'rtcl_pricing_packages', true) : '';
         ?>
             <div class="rtcl-fb-field">
-                <select name="package_pricings" id="package-pricings">
+                <select name="package_pricings" id="package-pricings" disabled>
                     <?php 
                         $packages = Helpers::get_pricing_packages();
                     foreach( $packages as $package ) {
