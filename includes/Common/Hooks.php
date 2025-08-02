@@ -11,6 +11,7 @@ class Hooks
     use Singleton;
 
     public $visibility_param;
+    public $ran_once = false;
 
     public function __construct()
     {
@@ -30,8 +31,29 @@ class Hooks
         }
 
         add_filter('rtcl_listing_form_after_update_responses_redirect_url', [$this, 'append_visibility_in_url'], 10, 5);
+        add_action('rtcl_before_delete_listing', [$this, 'increment_the_listing_availability'], 10, 1);
 
         // add_action( 'parse_query', [ $this, 'parse_query_for_pricing' ], 7, 1 );
+    }
+
+    public function increment_the_listing_availability($post_id)
+    {
+
+        if($this->ran_once ) {
+            return;
+        }
+        
+        $post             = get_post($post_id);
+        $post_author_id   = isset($post->post_author) ? $post->post_author : 0;
+        $user             = get_userdata($post_author_id);
+
+        if(! in_array('administrator', $user->roles) ) {
+            $selected_listing_package = ! empty(get_post_meta($post_id, 'rtcl_pricing_packages', true))  ? get_post_meta($post_id, 'rtcl_pricing_packages', true) : '';
+            $availability             = ! empty(get_post_meta($selected_listing_package, 'rtcl_pricing_available_slots', true)) ? (int)get_post_meta($selected_listing_package, 'rtcl_pricing_available_slots', true) : 0;
+            ++$availability;
+            update_post_meta($selected_listing_package, 'rtcl_pricing_available_slots', $availability);
+            $this->ran_once = true;
+        }
     }
 
     public function get_visibility_parameter()
@@ -125,7 +147,7 @@ class Hooks
             foreach( $listing_ids as $listing_id ) {
                 $post = get_post($listing_id);
                 
-                if( isset($post->post_author) && $post->post_author ==1  ) { // set one admin fake add to draft, when real ad is posted.
+                if(isset($post->post_author) && $post->post_author ==1  ) { // set one admin fake add to draft, when real ad is posted.
                     $post_args = [
                         'ID'          => $listing_id,
                         'post_status' => 'draft'
