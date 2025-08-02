@@ -101,8 +101,8 @@ if(empty($banner_image) ) {
         <th><?php esc_html_e("Avail.", "classified-listing"); ?></th>
     </tr>
 
-    <?php if (!empty($pricing_options) ) : ?>
-        <?php foreach ($pricing_options as $pricing) :
+    <?php if (!empty($filtered_pricings) ) : ?>
+        <?php foreach ($filtered_pricings as $pricing) :
                 $price        = get_post_meta($pricing->ID, 'price', true);
                 $visible      = get_post_meta($pricing->ID, 'visible', true);
                 $featured     = get_post_meta($pricing->ID, 'featured', true);
