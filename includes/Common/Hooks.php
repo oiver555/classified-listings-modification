@@ -33,7 +33,44 @@ class Hooks
         add_filter('rtcl_listing_form_after_update_responses_redirect_url', [$this, 'append_visibility_in_url'], 10, 5);
         add_action('rtcl_before_delete_listing', [$this, 'increment_the_listing_availability'], 10, 1);
 
+        add_action('admin_menu', [$this, 'remove_add_new_for_rctl_menu'], 99999);
+
+        add_filter('manage_rtcl_listing_posts_columns', [$this,'add_custom_column_to_rtcl_listing'], 10, 1);
+
+        add_action('manage_rtcl_listing_posts_custom_column', [$this, 'add_custom_data_to_rtcl_listing'], 10, 2);
+
         // add_action( 'parse_query', [ $this, 'parse_query_for_pricing' ], 7, 1 );
+    }
+
+    public function add_custom_column_to_rtcl_listing($columns)
+    {
+        $first_half    = array_slice($columns, 0, 4);
+        $mid_half      = ['rtcl_pricing_plans' => 'Pricing Plans'];
+        $last_half     = array_slice($columns, 4);
+        $merged_colums = array_merge($first_half, $mid_half, $last_half);
+        return $merged_colums;
+    }
+
+    public function add_custom_data_to_rtcl_listing($column, $post_id)
+    {
+        switch( $column ) {
+        case 'rtcl_pricing_plans':
+            $package_id = get_post_meta($post_id, 'rtcl_pricing_packages', true);
+            $package_name = empty($package_id) ? 'No Package Assigned' : get_the_title($package_id);
+            echo $package_name;
+            break;
+        }
+    }
+ 
+    /**
+     * Remove 'Add New Listing'
+     *
+     * @return void
+     */
+    public function remove_add_new_for_rctl_menu()
+    {
+        global $submenu;
+        unset($submenu['edit.php?post_type=rtcl_listing'][10]);
     }
 
     public function increment_the_listing_availability($post_id)
