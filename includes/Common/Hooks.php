@@ -42,6 +42,9 @@ class Hooks
 
         add_action('manage_rtcl_listing_posts_custom_column', [$this, 'add_custom_data_to_rtcl_listing'], 10, 2);
 
+        add_action('wp_trash_post', [$this, 'set_the_fake_ads_to_publish_from_draft_when_real_ad_is_deleted_by_user'], 10, 1);
+        add_action('wp_trash_post', [$this, 'increment_the_listing_availability'], 10, 1);
+
         // add_action( 'parse_query', [ $this, 'parse_query_for_pricing' ], 7, 1 );
     }
 
@@ -114,6 +117,7 @@ class Hooks
                     'post_status' => 'publish'
                     )
                 );
+                $this->_run_once_to_set_admin_listing_to_publish = true;
                 break;
             }
         }
