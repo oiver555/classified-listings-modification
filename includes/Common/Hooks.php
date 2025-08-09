@@ -3,6 +3,7 @@
 
     use Halwaytovegas\ClassifiedListingModifications\Helpers\Helpers;
 use Halwaytovegas\ClassifiedListingModifications\Traits\Singleton;
+use RTLC\Helper;
 
 use function Adminer\error;
 
@@ -12,6 +13,7 @@ class Hooks
 
     public $visibility_param;
     public $ran_once = false;
+    public $_run_once_to_set_admin_listing_to_publish = false;
 
     public function __construct()
     {
@@ -31,7 +33,8 @@ class Hooks
         }
 
         add_filter('rtcl_listing_form_after_update_responses_redirect_url', [$this, 'append_visibility_in_url'], 10, 5);
-        add_action('rtcl_before_delete_listing', [$this, 'increment_the_listing_availability'], 10, 1);
+        // add_action('rtcl_before_delete_listing', [$this, 'increment_the_listing_availability'], 10, 1);
+        add_action('rtcl_before_delete_listing', [$this, 'set_the_fake_ads_to_publish_from_draft_when_real_ad_is_deleted_by_user'], 10, 1);
 
         add_action('admin_menu', [$this, 'remove_add_new_for_rctl_menu'], 99999);
 
@@ -90,6 +93,29 @@ class Hooks
             ++$availability;
             update_post_meta($selected_listing_package, 'rtcl_pricing_available_slots', $availability);
             $this->ran_once = true;
+        }
+    }
+
+    public function set_the_fake_ads_to_publish_from_draft_when_real_ad_is_deleted_by_user($post_id)
+    {
+        if($this->_run_once_to_set_admin_listing_to_publish ) {
+            return;
+        }
+        $pricing_id_of_the_post_being_deleted = ! empty(get_post_meta($post_id, 'rtcl_pricing_packages', true)) ? get_post_meta($post_id, 'rtcl_pricing_packages', true) : '';
+        $listings_assigned_to_this_pricing_id =  Helpers::fetch_listing_ids_based_on_pricing_id($pricing_id_of_the_post_being_deleted, 'draft'); // get the posts, that are draft.
+        
+        foreach( $listings_assigned_to_this_pricing_id as $post_id ) {
+            $post_data = ! empty(Helpers::get_author_id_and_post_status($post_id)) ? Helpers::get_author_id_and_post_status($post_id) : [];
+            
+            if(! empty($post_data) && isset($post_data['author_id']) &&  isset($post_data['post_status']) &&  $post_data['author_id'] == 1 && $post_data['post_status'] == 'draft' ) {
+                wp_update_post(
+                    array(
+                    'ID'          => $post_id,
+                    'post_status' => 'publish'
+                    )
+                );
+                break;
+            }
         }
     }
 

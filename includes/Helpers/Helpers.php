@@ -138,7 +138,7 @@ class Helpers
      * @param  int $pricing_id
      * @return array
      */
-    public static function fetch_listing_ids_based_on_pricing_id( $pricing_id )
+    public static function fetch_listing_ids_based_on_pricing_id( $pricing_id, $post_status = 'publish' )
     {
         global $wpdb;
         $sql    = $wpdb->prepare("SELECT post_id FROM {$wpdb->prefix}postmeta WHERE meta_value = %d AND meta_key = %s", [$pricing_id, 'rtcl_pricing_packages']);
@@ -147,11 +147,25 @@ class Helpers
         $filteredData = [];
 
         foreach( $datas as $data ) {
-            if(get_post_status($data) == 'publish' ) {
+            if(get_post_status($data) == $post_status ) {
                 array_push($filteredData, $data);
             }
         }
         
         return  $filteredData;
+    }
+
+    public static function get_author_id_and_post_status($post_id)
+    {
+        $post = get_post($post_id);
+    
+        if (! $post ) {
+            return false; // Post not found
+        }
+    
+        return array(
+            'author_id'  => $post->post_author,
+            'post_status' => $post->post_status,
+        );
     }
 }
