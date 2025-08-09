@@ -148,10 +148,10 @@ if(empty($banner_image) ) {
                             esc_html__('Price [%1$s %2$s]:', 'classified-listing'),
                             esc_html($currency),
                             esc_html($currency_symbol)
-                        ); ?>">
+                                    ); ?>">
                         <?php echo $free_package == 1 || $free_package_with_validity ? 'FREE' : Functions::get_payment_formatted_price($price); ?>
                     </td>
-                    <td>
+                    <td style="<?php echo $availability == 0 ? 'color:red;' : ''; ?>">
                         <?php echo $free_package == 1 ? '∞' : $availability; ?>
                     </td>
                 </tr>
