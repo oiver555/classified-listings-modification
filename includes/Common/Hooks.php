@@ -33,7 +33,7 @@ class Hooks
         }
 
         add_filter('rtcl_listing_form_after_update_responses_redirect_url', [$this, 'append_visibility_in_url'], 10, 5);
-        // add_action('rtcl_before_delete_listing', [$this, 'increment_the_listing_availability'], 10, 1);
+        add_action('rtcl_before_delete_listing', [$this, 'increment_the_listing_availability'], 10, 1);
         add_action('rtcl_before_delete_listing', [$this, 'set_the_fake_ads_to_publish_from_draft_when_real_ad_is_deleted_by_user'], 10, 1);
 
         add_action('admin_menu', [$this, 'remove_add_new_for_rctl_menu'], 99999);
