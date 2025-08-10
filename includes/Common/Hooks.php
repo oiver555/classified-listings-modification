@@ -140,9 +140,12 @@ class Hooks
         $public_posts = get_posts(
             [
             'post_type'   => 'rtcl_listing',
-            'post_status' => 'publish'
-                 ] 
+            'post_status' => 'publish',
+            'numberposts' => -1
+            ] 
         );
+
+        $number_of_listing_expired_belong_to_term_id = [];
 
         if (! empty($public_posts) ) {
             foreach ( $public_posts as $post ) {
@@ -150,6 +153,7 @@ class Hooks
                 $post_author_id = isset($post->post_author) ? $post->post_author : 0;
                 $user           = get_userdata($post_author_id);
                 $expiry_date    = get_post_meta($post_id, 'expiry_date', true);
+                $category     = Helpers::get_parent_category(get_the_terms($post_id, 'rtcl_category'));
 
                 if (in_array('administrator', $user->roles) ) { //exclude admin created posts, only update the status of non-admin created posts to draft
                     continue;
@@ -163,6 +167,11 @@ class Hooks
                             'post_status' => 'draft'
                         ];
                         wp_update_post($post_args);
+                        if(! isset($number_of_listing_expired_belong_to_term_id[$category->term_id]) ) {
+                            $number_of_listing_expired_belong_to_term_id[$category->term_id] = 0;
+                        } else {
+                            $number_of_listing_expired_belong_to_term_id[$category->term_id]++;
+                        }
                     }
                 }
             }
@@ -172,8 +181,9 @@ class Hooks
         $draft_posts = get_posts(
             [
             'post_type'   => 'rtcl_listing',
-            'post_status' => 'draft'
-                 ] 
+            'post_status' => 'draft',
+            'numberposts' => -1
+            ] 
         );
 
         if (! empty($draft_posts) ) {
@@ -181,14 +191,19 @@ class Hooks
                 $post_id        = isset($post->ID) ? $post->ID : 0;
                 $post_author_id = isset($post->post_author) ? $post->post_author : 0;
                 $user           = get_userdata($post_author_id);
+                $category     = Helpers::get_parent_category(get_the_terms($post_id, 'rtcl_category'));
 
-                if ($user && in_array('administrator', $user->roles) ) {
+                if ($user && in_array('administrator', $user->roles) && isset($number_of_listing_expired_belong_to_term_id[$category->term_id]) && $number_of_listing_expired_belong_to_term_id[$category->term_id]  != 0 ) {
                     $post_args = [
                         'ID'          => $post_id,
                         'post_status' => 'publish'
                     ];
+                    $selected_listing_package = ! empty(get_post_meta($post_id, 'rtcl_pricing_packages', true))  ? get_post_meta($post_id, 'rtcl_pricing_packages', true) : '';
+                    $availability             = ! empty(get_post_meta($selected_listing_package, 'rtcl_pricing_available_slots', true)) ? (int)get_post_meta($selected_listing_package, 'rtcl_pricing_available_slots', true) : 0;
+                    ++$availability;
                     wp_update_post($post_args);
-                    break;
+                    update_post_meta($selected_listing_package, 'rtcl_pricing_available_slots', $availability);
+                    $number_of_listing_expired_belong_to_term_id[$category->term_id]--;
                 }
             }
         }
