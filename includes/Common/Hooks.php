@@ -29,7 +29,7 @@ class Hooks
         add_action('run_cron_to_update_status_of_listing', [$this, 'trigger_expiry_date_check']);
 
         if (! wp_next_scheduled('run_cron_to_update_status_of_listing') ) {
-            wp_schedule_event(time(), 'daily', 'run_cron_to_update_status_of_listing');
+            wp_schedule_event(time(), 'hourly', 'run_cron_to_update_status_of_listing');
         }
 
         add_filter('rtcl_listing_form_after_update_responses_redirect_url', [$this, 'append_visibility_in_url'], 10, 5);
