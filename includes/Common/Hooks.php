@@ -168,7 +168,7 @@ class Hooks
                         ];
                         wp_update_post($post_args);
                         if(! isset($number_of_listing_expired_belong_to_term_id[$category->term_id]) ) {
-                            $number_of_listing_expired_belong_to_term_id[$category->term_id] = 0;
+                            $number_of_listing_expired_belong_to_term_id[$category->term_id] = 1;
                         } else {
                             $number_of_listing_expired_belong_to_term_id[$category->term_id]++;
                         }
