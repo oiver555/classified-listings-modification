@@ -45,23 +45,23 @@ add_action(
 );
 
 
-add_action('init', 'action_init');
+// add_action('init', 'action_init');
 
-function action_init()
-{
-        $zones =  include __DIR__ . '/zones.php';
-    foreach( $zones as $country => $states ) {
-        $parent_term = wp_insert_term($country, 'rtcl_location');
-        if(!is_wp_error($parent_term) ) {
-            foreach( $states as $state) {
-                $state = wp_insert_term(
-                    $state, 
-                    'rtcl_location', 
-                    [
-                        'parent' => $parent_term['term_id']
-                    ]
-                );
-            }
-        }
-    }
-}
+// function action_init()
+// {
+//         $zones =  include __DIR__ . '/zones.php';
+//     foreach( $zones as $country => $states ) {
+//         $parent_term = wp_insert_term($country, 'rtcl_location');
+//         if(!is_wp_error($parent_term) ) {
+//             foreach( $states as $state) {
+//                 $state = wp_insert_term(
+//                     $state, 
+//                     'rtcl_location', 
+//                     [
+//                         'parent' => $parent_term['term_id']
+//                     ]
+//                 );
+//             }
+//         }
+//     }
+// }

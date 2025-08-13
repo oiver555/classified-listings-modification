@@ -164,7 +164,7 @@ class Hooks
                     if (time() >= $timestamp ) {
                         $post_args = [
                             'ID'          => $post_id,
-                            'post_status' => 'draft'
+                            'post_status' => 'rtcl-expired'
                         ];
                         wp_update_post($post_args);
                         if(! isset($number_of_listing_expired_belong_to_term_id[$category->term_id]) ) {
