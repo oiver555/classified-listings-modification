@@ -154,8 +154,10 @@ class Hooks
                 $user           = get_userdata($post_author_id);
                 $expiry_date    = get_post_meta($post_id, 'expiry_date', true);
                 $category     = Helpers::get_parent_category(get_the_terms($post_id, 'rtcl_category'));
+                $check_never_expires = get_post_meta($post_id, 'never_expires', true);
 
-                if (in_array('administrator', $user->roles) ) { //exclude admin created posts, only update the status of non-admin created posts to draft
+
+                if (in_array('administrator', $user->roles) || (bool)$check_never_expires == true ) { //exclude admin created posts, only update the status of non-admin created posts to draft
                     continue;
                 }
 
