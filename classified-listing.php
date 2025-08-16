@@ -3,7 +3,7 @@
  * Plugin Name: Classified Listing Modificaiton
  * Plugin URI:  https://www.radiustheme.com/downloads/classima-classified-ads-wordpress-theme/
  * Description: Modification Of Classified Listing For Halway To Vegas.
- * Version:     1.0.1
+ * Version:     1.1.1
  * Author:      Cupid Chakma
  * Author URI:  https://profiles.wordpress.org/cu121/
  * Text Domain: classified-listing-modifiaction
